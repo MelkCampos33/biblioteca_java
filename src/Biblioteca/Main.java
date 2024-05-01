@@ -11,8 +11,6 @@ public class Main {
     static Scanner input;
     static Database database;
 
-    // teste para o github
-
     public static void main(String[] args) {
 
          database = new Database();
