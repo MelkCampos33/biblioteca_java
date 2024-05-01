@@ -26,6 +26,7 @@ public class Database {
     private File arquivosLivro = new File("D:\\Library Management System\\Data\\Books");
 
     private File pastaArquivos = new File("D:\\Library Management System\\Data");
+
     public Database() {
 
         if(!pastaArquivos.exists()) {
@@ -44,9 +45,9 @@ public class Database {
             try {
                 arquivosLivro.createNewFile();
             } catch (Exception event) {}
-
         }
 
+      //getUsers();
     }
 
     // --------------------------------------------------- Construtores do usuario, login e livros --------------------------------------------------------------
@@ -64,7 +65,7 @@ public class Database {
 
         for(User adicionarUsuario : usuarios) {
 
-            // verificação se o telefone e email de usuario sao iguais
+            // verificação se o telefone e email de usuario para entrar na conta
             if (adicionarUsuario.getPhoneNumber().matches(telefone) && adicionarUsuario.getEmail().matches(email)) {
                 value = usuarios.indexOf(adicionarUsuario);
                 break;
@@ -82,6 +83,7 @@ public class Database {
 
         livros.add(novoLivro);
         nomeLivros.add(novoLivro.getNome());
+        saveBooks();
     }
 
     private void getUsers() {
@@ -96,30 +98,37 @@ public class Database {
                 firstText = firstText + firstString;
             }
 
-            bufferedReader_1.close();
+                bufferedReader_1.close();
 
-        } catch (Exception event) {
-            System.err.println(event.toString());
+            } catch (Exception event) {
+                System.err.println(event.toString());
         }
 
+
+        // verificação de informaçao de usuario (normal e adm
+        //
+        // )
+
         if(!firstText.matches("") || !firstText.isEmpty()) {
-            String[] a_1 = firstText.split("<NewUser>");
+
+            String[] a_1 = firstText.split("<NewUser/>"); // passando a String para array
 
             for(String s : a_1) {
                 String[] a_2 = s.split("<N/>");
 
                 if(a_2[3].matches("Admin")) {
+
                     User usuario = new Admin(a_2[0], a_2[1], a_2[2]);
                     usuarios.add(usuario);
                     nomeUsuarios.add(usuario.getName());
 
                 } else {
+
                     User usuario = new NormalUser(a_2[0], a_2[1], a_2[2]);
                     usuarios.add(usuario);
                     nomeUsuarios.add(usuario.getName());
 
                 }
-
             }
         }
     }
@@ -150,7 +159,8 @@ public class Database {
         String firstText = "";
 
         for(Book livro : livros) {
-            firstText = firstText + livro.toString() + "<NewBook/> \n";
+
+            firstText = firstText + livro.toString2() + "<NewBook/> \n";
         }
 
         try {
@@ -165,7 +175,56 @@ public class Database {
             System.err.println(event.toString());
         }
     }
-}
+
+    private void getBooks() {
+
+        String firstText = "";
+
+        try {
+            BufferedReader bufferedReader_1 = new BufferedReader(new FileReader(arquivosLivro));
+            String firstString;
+
+            while ((firstString = bufferedReader_1.readLine()) != null) {
+                firstText = firstText + firstString;
+            }
+
+            bufferedReader_1.close();
+
+        } catch (Exception event) {
+            System.err.println(event.toString());
+        }
+
+        if(!firstText.matches("") || !firstText.isEmpty()) {
+                String[] value1 = firstText.split("<NewBook>");
+
+                for(String stringValue : value1) {
+                    Book livro = parseBook(stringValue);
+                    livros.add(livro);
+                    nomeLivros.add(livro.getNome());
+                }
+            }
+        }
+
+        public Book parseBook(String stringValue) {
+
+            // transformando a string em um array
+            String[] value = stringValue.split("<N/>");
+
+            Book livro = new Book();
+
+            livro.setNome(value[0]);
+            livro.setAutor(value[1]);
+            livro.setEditora(value[2]);
+            livro.setLocalColeta(value[3]);
+
+            livro.setCopiasVenda(Integer.parseInt(value[4]));
+            livro.setPreco(Double.parseDouble(value[5]));
+            livro.setCopiasAluguel(Integer.parseInt(value[6]));
+
+            return livro;
+        }
+    }
+
 
 
 

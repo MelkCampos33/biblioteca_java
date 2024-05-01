@@ -106,6 +106,9 @@ public class Book {
         this.copiasAluguel = copiasAluguel;
     }
 
+
+    // definindo informações do livro
+
     public String toString2() {
 
         String textoInformativoLivros = nome = "<N/>" + autor + "<N/>" + editora + "<N/>" + localColeta + "<N/>" +
@@ -113,4 +116,5 @@ public class Book {
 
         return textoInformativoLivros;
     }
+
 }
